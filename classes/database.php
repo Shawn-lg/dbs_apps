@@ -16,14 +16,14 @@ class database{
         try{
             $con->beginTransaction();
  
-            $stmt = $con->prepare("INSERT INTO Admin (admin_FN, admin_LN, admin_username, admin_email,admin_password) VALUES (?, ?, ?, ?, ?)");
+            $stmt = $con->prepare("INSERT INTO students (admin_FN, admin_LN, admin_username, admin_email,admin_password) VALUES (?, ?, ?, ?, ?)");
             $stmt->execute([$firstname, $lastname, $username, $email,$password]);
  
             //Get the newly inserted user_id
             $userID = $con->lastInsertID();
             $con->commit();
  
-            //returns the new admin's ID so it can be used in other operations
+            //returns the new admin's ID so it can be used in other operationsm
             return $userID;
         }catch(PDOException $e){
  
@@ -50,6 +50,13 @@ class database{
          return $count > 0;
            
         }
+        function isCourseExists($course_name){
+   $con = $this->opencon();
+   $stmt = $con->prepare("SELECT COUNT(*) FROM courses WHERE course_name= ?");
+   $stmt->execute([$course_name]);
+   $count = $stmt->fetchColumn();
+   return $count > 0;
+}
         function loginUser($username, $password){
             $con = $this->opencon();
             $stmt = $con->prepare("SELECT*FROM Admin WHERE admin_username = ?");
@@ -61,5 +68,40 @@ class database{
         }else{
             return false;
     }
+    }
+    function addstudent($firstname, $lastname, $email ,$admin_id){
+    $con = $this->opencon();
+        try{
+            $con->beginTransaction();
+            $stmt = $con->prepare("INSERT INTO Students (student_FN, student_LN, student_email, admin_id) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$firstname, $lastname, $email, $admin_id]);
+            //Get the newly inserted user_id
+            $userID = $con->lastInsertID();
+            $con->commit();
+            //returns the new admin's ID so it can be used in other operations
+            return $userID;
+        }catch(PDOException $e){
+            //reverts any chnages made during the transaction. This keeps the database clean and consistent in case of an error
+            $con->rollBack();
+            return false;
+        }
+    }
+    function addCourse($coursename, $admin_id){
+        $con = $this->opencon();
+        try{
+            $con->beginTransaction();
+            $stmt = $con->prepare("INSERT INTO Courses (course_name, admin_id) VALUES (?, ?)");
+            $stmt->execute([$coursename, $admin_id]);
+            //Get the newly inserted course_id
+            $courseID = $con->lastInsertID();
+            $con->commit();
+            //returns the new course's ID so it can be used in other operations
+            return $courseID;
+        }catch(PDOException $e){
+            //reverts any changes made during the transaction. This keeps the database clean and consistent in case of an error
+            $con->rollBack();
+            return false;
+        }
+        
     }
 }
