@@ -80,8 +80,6 @@ if(isset($_POST['add_student'])){
   }
 
 }
- 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -95,32 +93,51 @@ if(isset($_POST['add_student'])){
 <div class="container py-5">
 <h2 class="mb-4 text-center">Student Records</h2>
 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addStudentModal">Add New Student</button>
-<table class="table table-bordered table-hover bg-white">
+<table class="table table-bordered table-hover bg-white bg-white text-center">
 <thead class="table-dark">
 <tr>
 <th>ID</th>
 <th>Full Name</th>
 <th>Email</th>
-<th>Course</th>
+
 <th>Actions</th>
 </tr>
 </thead>
 <tbody>
+  <?php
+
+  $students = $con->getStudents();
+foreach($students as $student){
+
+
+  ?>
 <tr>
-<td>1</td>
-<td>Jei Q. Pastrana</td>
-<td>jei@example.com</td>
-<td>DIT</td>
+  <td><?php echo $student['student_id'] ?></td>
+  <td><?php echo $student['student_FN'] . ' ' . $student['student_LN'] ?></td>
+  <td><?php echo $student['student_email'] ?></td>
+
 <td>
-<button class="btn btn-sm btn-warning">Edit</button>
-<button class="btn btn-sm btn-danger">Delete</button>
+ <div class="btn-group" role = "group">
+  <form action="update_student.php" method="POST">
+    <input type="hidden" name="student_id" value="<?php echo $student['student_id']?>">
+    <button type = "submit" class="btn btn-sm btn-warning">Edit</button>
+
+  </form>
+
+ </div>
+ 
+  <button class="btn btn-sm btn-danger">Delete</button>
+
 </td>
 </tr>
+<?php
+  }
+    ?>
 </tbody>
 </table>
 <h2 class="mb-4 mt-5">Courses</h2>
 <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addCourseModal">Add Course</button>
-<table class="table table-bordered table-hover bg-white">
+<table class="table table-bordered table-hover bg-white bg-white text-center">
 <thead class="table-dark">
 <tr>
 <th>ID</th>
@@ -129,6 +146,37 @@ if(isset($_POST['add_student'])){
 </tr>
 </thead>
 <tbody>
+  <?php
+
+  $courses = $con->getCourses();
+foreach($courses as $course){
+
+
+  ?>
+<tr>
+  <td><?php echo $course['course_id'] ?></td>
+  <td><?php echo $course['course_name'] ?></td>
+  
+
+<td>
+ <div class="btn-group" role = "group">
+  <form action="update_course.php" method="POST">
+    <input type="hidden" name="course_id" value="<?php echo $course['course_id']?>">
+    <button type = "submit" class="btn btn-sm btn-warning">Edit</button>
+
+  </form>
+
+ </div>
+ 
+  <button class="btn btn-sm btn-danger">Delete</button>
+
+</td>
+</tr>
+<?php
+  }
+    ?>
+</tbody>
+</table>
 <tr>
 <td>1</td>
 <td>BS Information Technology</td>
@@ -194,10 +242,10 @@ if(isset($_POST['add_student'])){
 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 <div class="modal-body">
-<input type="text" name="course_name" class="form-control mb-2" placeholder="Course Name" required>
+<input type="text" id="course_name" name="course_name" class="form-control mb-2" placeholder="Course Name" required>
 </div>
 <div class="modal-footer">
-<button type="submit" id= "registerButton" name="add_course" class="btn btn-success">Add Course</button>
+<button type="submit" id="registerButton" name="add_course" class="btn btn-success">Add Course</button>
 </div>
 <script src="./bootstrap-5.3.3-dist/js/bootstrap.js"></script>
 <script src="./package/dist/sweetalert2.js"></script>
